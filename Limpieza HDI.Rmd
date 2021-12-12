@@ -1,0 +1,33 @@
+---
+title: "Limpieza HDI"
+author: "Cesar Poggi"
+date: "12/12/2021"
+output: html_document
+---
+```{r}
+library(rio)
+link_raw="https://github.com/salvarezb/TrabajoEST2/raw/main/HDI_raw.csv"
+HDI_limpio=import(link_raw)
+```
+
+Limpieza
+```{r}
+HDI_limpio=HDI_limpio[-c(1:10,12,64:3685),]
+HDI_limpio=HDI_limpio[,-c(1,2,3)]
+
+colnames(HDI_limpio) <- HDI_limpio[1,]
+HDI_limpio=HDI_limpio[-c(1),]
+rownames(HDI_limpio) <- NULL
+
+HDI_limpio[,-c(1,39,101,102)]=apply(apply(HDI_limpio[,-c(1,39,101,102)], 2, gsub, patt=",", replace="."), 2, as.numeric)
+```
+
+Exportación CSV
+```{r}
+HDI_limpio=HDI_limpio[,c(1,63,71,114)]
+colnames(HDI_limpio)[c(1,2,3,4)]=c("Estado","Inseguridad Alimentaria en Hogares", "No Asegurados", "Pobreza")
+
+library(readr)
+write.csv(HDI_limpio, "HDI_limpio.csv")
+```
+
