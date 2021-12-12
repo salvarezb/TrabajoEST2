@@ -1,0 +1,68 @@
+---
+title: "Limpieza"
+author: "Julio Flores Calderón"
+date: "12/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r include=FALSE}
+library(htmltab)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(rio)
+library(stringr)
+library(plotly)
+library(DescTools)
+library(reshape)
+library(ggcorrplot)
+library(stringr)
+library(rvest)
+library(httr)
+```
+HEALTH
+ 
+```{r}
+
+health = "https://github.com/salvarezb/TrabajoEST2/blob/main/Health_raw.xlsx?raw=true"
+
+health =import(health)
+```
+Limpieza de la data
+
+```{r}
+health= health[-c(1,2,4,6,8,10,12,14,15)]
+
+health= health[-c(1,2,13,24,35,46),]
+
+health= arrange(health, STATE)
+
+names(health)=c("Estado","Mental Health","Infant Mortality Rate","Moratality Rate","Obesity Rate","Smoking Rate")
+
+```
+
+
+```{r}
+
+
+
+dontselect=c("Estado")
+
+select=setdiff(names(health),dontselect) 
+
+theData=health[,select]
+
+corMatrix=polycor::hetcor(theData)$correlations
+
+ggcorrplot(corMatrix)
+
+write.csv(health, file="health_limpio.csv")
+
+
+```
